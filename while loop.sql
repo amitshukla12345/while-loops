@@ -808,12 +808,9 @@ SELECT agecheck(19);
     INSERT INTO students values(500);
     insert into students Values(null);
     
-    
-    
     DELIMITER $$
     CREATE PROCEDURE erroHandling(IN s_id INT)
     Begin
-    
             DECLARE CONTINUE HANDLER FOR 1062
             BEGIN
            select "YOU CANNOT INSERT Duplicate values";
@@ -822,8 +819,111 @@ SELECT agecheck(19);
     select "code after insertion";
     END$$
     DELIMITER ;
-    
     CALL erroHandling(500);
+    
+    -- 21 08 2024  Cursor
+    select * from employee;
+    /*
+    Declare Cursor
+    OPEN CURSOR
+    Fetch CURSOR
+    CLOSE CURSOR
+    */
+    /*
+    1) Declare Cursor
+        Declare Cursor_name CURSOR fOR select query
+        Declare  S CURSOR FOR SELECT id FROM student;
+	2)  OPEN CURSOR
+        Open  cursor_name;
+        open s;
+	3) Fetch CURSOR
+       FETCH cursor_name INTO variable_list;
+       FETCH S INTO Student_id;
+   4) CLOSE CURSOR
+      CLOSE  cursor_name;
+      CLOSE S;
+      */
+    SELECT * FROM  employee;
+    DELIMITER $$
+    Create procedure cursorexample()
+    Begin
+    DECLARE E_ID INT;
+    DECLARE e_name varchar(100);
+    DECLARE e_cursor cursor for
+    select employee.E_ID,employee.e_name from employee;
+    open e_cursor;
+    FETCH e_cursor into E_ID,e_name;
+    close e_cursor;
+    END$$
+    DELIMITER ;
+    Call cursorexample();
+    drop procedure cursorexample;
+    show tables ;
+     
+    
+    -- 23 08 2023
+        use xyz_company;
+    -- trigger
+    --  id name working_hours pay_per_hour salary previous_pay
+    --  INSERT   NEW 
+    -- UPDATE    OLD   NEW
+    -- DELETE    OLD
+    /*
+    CREATE TRIGGER trigger_name
+    (Before | AFTER) (INSERT | UPDATE |)
+    ON TABLE_NAME FOR EACH ROW
+    BEGIN
+    
+    END
+    */
+    
+    CREATE TABLE employee1(
+    name VARCHAR(100),
+    Working_hours INT,
+    pay_per_hour INT,
+    salary INT
+    );
+    
+    select  * from employee1;
+    
+    INSERT INTO employee1 (name,working_hours,pay_per_hour)
+    values("Rahul",3,500);
+   
+     drop table employee1;
+    DELIMITER $$
+    CREATE TRIGGER before_insert_employee1
+    BEFORE INSERT
+    ON employee1 FOR EACH ROW
+    BEGIN
+      set NEW.salary=NEW.working_hours*NEW.pay_per_hour;
+      
+      END$$
+      DELIMITER ;
+    Drop trigger before_insert_employee1;
+    
+    
+    DELIMITER $$
+    CREATE TRIGGER before_update_employee1
+    BEFORE UPDATE
+    ON employee1 FOR EACH ROW
+    BEGIN
+    SET NEW.salary=NEW.working_hours*new.pay_per_hour;
+    END$$
+    DELIMITER ;
+    UPDATE employee1 set working_hours=5 WHERE name="Rahul";
+    ALTER TABLE employee1 ADD COLUMN previous_pay INT;
+    
+    
+    
+    
+    
+    
+   
+    
+	
+      
+    
+    
     
   
     
